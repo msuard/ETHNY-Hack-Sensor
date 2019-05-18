@@ -1,0 +1,36 @@
+{
+  "name": "sensor-client",
+  "private": true,
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "meteor run --settings settings/development.json",
+    "local": "meteor --port 3030 run --settings settings/local.json",
+    "local:android": "meteor --port 3030 run android-device --settings settings/local.json",
+    "local:android-emulator": "meteor run android --settings settings/local.json",
+    "local:ios": "meteor run ios-device --settings settings/local.json",
+    "dev:android-emulator": "meteor run android --settings settings/development.json",
+    "dev:android": "meteor run android-device --settings settings/development.json",
+    "dev:ios": "meteor run ios-device --settings settings/development.json",
+    "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+    "visualize": "meteor --production --extra-packages bundle-visualizer"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.3.4",
+    "jsbn": "^1.1.0",
+    "meteor-node-stubs": "^0.4.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.0.3",
+    "react-screen-orientation": "0.0.3",
+    "redux": "^4.0.1",
+    "uuid": "^3.3.2"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.jsx",
+      "server": "server/main.js"
+    },
+    "testModule": "tests/main.js"
+  }
+}

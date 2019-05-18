@@ -1,0 +1,56 @@
+html {
+  height: 100%;
+  background: #5FAD41;
+  text-align: center;
+}
+
+head {
+  background: #5FAD41;
+  text-align: center;
+}
+
+body {
+  padding: 10px;
+  font-family: sans-serif;
+  min-height: 100%;
+  background-color: #5FAD41;
+  text-align: center;
+}
+
+#main {
+  text-align: center;
+  background-color: #5FAD41;
+  min-height: 100%;
+}
+
+#body {
+  min-height: 100%;
+  text-align: center;
+}
+
+#button {
+  margin-top: 75%;
+  margin-left: 27.5%;
+}
+
+#countdown {
+  text-align: center;
+  margin-top: 65%;
+  margin-left: 40%;
+}
+
+#time{
+  font-size: 60px;
+}
+
+#shippingId {
+  font-size: 18px;
+}
+
+#result{
+  margin-top: 65%;
+  margin-left: 20%;
+  font-size: 60px;
+}
+
+

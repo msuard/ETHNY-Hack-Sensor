@@ -1,0 +1,4 @@
+node_modules/
+development.json
+local.json
+.gitsecret/keys/random_seed
