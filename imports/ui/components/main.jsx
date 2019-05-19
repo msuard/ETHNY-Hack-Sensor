@@ -8,10 +8,9 @@ import * as ElGamal from '../crypto/elGamal';
 
 const orientationPrimes = [2, 3, 5];
 
-const p = Meteor.settings.public.p;
-const g = Meteor.settings.public.g;
-const A = Meteor.settings.public.A;
-
+const g = "23114357934155028";
+const p = "170141183460469231731690190877448458819";
+const A = "8196641841371205329673726354863932167";
 
 class MainComponent extends React.Component {
 
@@ -19,13 +18,14 @@ class MainComponent extends React.Component {
     super(props);
     this.state = {
       orientation: null,
-      setInterval: null
+      setInterval: null,
+      brokenPackage: false
     }
   }
 
   componentDidMount(){
 
-    // ElGamal.generateKeyPairAsync();
+    // ElGamal.generateKeyPairAsync(128);
 
     this.changeOrientation();
 
@@ -41,10 +41,46 @@ class MainComponent extends React.Component {
     if (this.state.orientation !== prevState.orientation && this.props.shippingId) {
       const timestamp = Date.now();
 
+      console.log("TIMESTAMP " + timestamp);
+
       const encryptedTimestamp = await ElGamal.encryptMessage(timestamp, p, g, A);
       const encryptedOrientation = await ElGamal.encryptMessage(this.state.orientation, p, g, A);
 
-      APIService.sendDataPoint(encryptedTimestamp, this.props.shippingId, encryptedOrientation)    }
+      let encryptedTimestampEphemeralKey = {
+        c1: "1",
+        c2: "1"
+      }//await ElGamal.encryptMessage(encryptedTimestamp.k, p, g, A);
+
+      console.log("EPHEMERAL KEY " + encryptedOrientation.k);
+
+      let encryptedOrientationEphemeralKey = await ElGamal.encryptMessage(encryptedOrientation.k, p, g, A);
+
+
+      APIService.sendDataPoint(
+        {
+
+          c1: encryptedTimestamp.c1,
+          c2: encryptedTimestamp.c2
+        },
+
+        this.props.shippingId,
+
+        {
+          c1: encryptedOrientation.c1,
+          c2: encryptedOrientation.c2
+        },
+
+        {
+          c1: encryptedTimestampEphemeralKey.c1,
+          c2: encryptedTimestampEphemeralKey.c2
+        },
+
+        {
+          c1: encryptedOrientationEphemeralKey.c1,
+          c2: encryptedOrientationEphemeralKey.c2
+        }
+      )
+    }
 
     if (this.props.shippingStarted !== prevProps.shippingStarted) {
 
@@ -74,9 +110,17 @@ class MainComponent extends React.Component {
       console.log("WARNING: orientation = " + screen.orientation.angle)
     }
 
-    this.setState({
-      orientation: orientationPrime
-    })
+    let newState = this.state;
+
+    if(orientationPrime === 5){
+      newState.brokenPackage = true;
+    }
+
+    newState.orientation = orientationPrime;
+
+    this.setState(newState);
+
+    this.sendDataPoint();
   }
 
   async sendDataPoint(){
@@ -84,19 +128,55 @@ class MainComponent extends React.Component {
 
     const timestamp = Date.now();
 
-    const encryptedTimestamp = await ElGamal.encryptMessage(timestamp, p, g, A);
-    const encryptedOrientation = await ElGamal.encryptMessage(this.state.orientation, p, g, A);
+    console.log("TIMESTAMP " + timestamp);
+
+    let encryptedTimestamp = await ElGamal.encryptMessage(timestamp, p, g, A);
+    let encryptedOrientation = await ElGamal.encryptMessage(this.state.orientation, p, g, A);
+
+    let encryptedTimestampEphemeralKey = {
+      c1: "1",
+      c2: "1"
+    };
+
+    //await ElGamal.encryptMessage(encryptedTimestamp.k, p, g, A);
+
+    console.log("EPHEMERAL KEY " + encryptedOrientation.k);
+
+    let encryptedOrientationEphemeralKey = await ElGamal.encryptMessage(encryptedOrientation.k, p, g, A);
 
 
-    APIService.sendDataPoint(encryptedTimestamp, this.props.shippingId, encryptedOrientation)
+    APIService.sendDataPoint({
+
+      c1: encryptedTimestamp.c1,
+      c2: encryptedTimestamp.c2
+      },
+
+      this.props.shippingId,
+
+      {
+        c1: encryptedOrientation.c1,
+        c2: encryptedOrientation.c2
+      },
+
+      {
+        c1: encryptedTimestampEphemeralKey.c1,
+        c2: encryptedTimestampEphemeralKey.c2
+      },
+
+      {
+        c1: encryptedOrientationEphemeralKey.c1,
+        c2: encryptedOrientationEphemeralKey.c2
+      }
+
+    )
+
   }
-
 
   render(){
 
     return (
 
-      <main id="main" role="main" className="site-content">
+      <main id="main" role="main" className="site-content"  style={ {backgroundColor: this.state.brokenPackage ? "#EE3553" : "#5FAD41" }}>
 
         <Body
         orientation={this.state.orientation}

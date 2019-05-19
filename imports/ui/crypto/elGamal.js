@@ -87,6 +87,7 @@ exports.encryptMessage = async function (m, p, g, A){
       resolve({
         c1: c1BigInt.toString(10),
         c2: c2BigInt.toString(10),
+        k: kBigInt.toString(10)
       })
 
     } catch(e) { reject(e) }

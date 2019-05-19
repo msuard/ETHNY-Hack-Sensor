@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
-
 class Countdown extends React.Component {
 
   constructor(props) {
@@ -59,7 +57,7 @@ class Countdown extends React.Component {
     return (
         <div id="countdown">
           <div id="time">10 s</div>
-          <div id="shippingId">{this.props.shippingId}</div>
+          <div id="shippingId">Shipment in progress...</div>
         </div>
 
     )
